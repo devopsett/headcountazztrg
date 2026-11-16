@@ -233,7 +233,7 @@
                     <label for="filter-event-select" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Pilih Event / Tab Sheet</label>
                     <select id="filter-event-select" onchange="renderDashboard()"
                         class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-bold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-azzuha-500">
-                        <option value="Ekspo Umrah & Haji 2026">Ekspo Umrah & Haji 2026 (Aktif)</option>
+                        <option value="ALL">Semua Event (Keseluruhan)</option>
                     </select>
                 </div>
                 <div class="flex items-center gap-2 sm:self-end shrink-0">
@@ -482,7 +482,96 @@
 
         let autoSyncInterval = null;
         let pendingDeleteTarget = null;
-// ... existing code ... -->
+
+        function getStoredPassword() {
+            return localStorage.getItem(KEYS.ADMIN_PASS) || DEFAULT_ADMIN_PASS;
+        }
+
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const user = document.getElementById('login-username').value.trim();
+            const pass = document.getElementById('login-password').value;
+            const errEl = document.getElementById('login-error');
+
+            if (user === ADMIN_USERNAME && pass === getStoredPassword()) {
+                errEl.classList.add('hidden');
+                sessionStorage.setItem(KEYS.ADMIN_AUTH, 'true');
+                unlockAdminPanel();
+                showToast('Anda berjaya log masuk ke Panel Admin Azzuha.', 'info', 'Log Masuk Berjaya');
+            } else {
+                errEl.classList.remove('hidden');
+            }
+        }
+
+        function unlockAdminPanel() {
+            document.getElementById('login-modal').classList.add('hidden');
+            document.getElementById('admin-app').classList.remove('hidden');
+            populateConfigEventDropdown();
+            document.getElementById('config-booth-open').checked = state.currentEvent !== '-' && state.boothOpen;
+            document.getElementById('config-kiosk-seconds').value = String(state.kioskSeconds);
+            updateBoothToggleLabel();
+            initData();
+            lucide.createIcons();
+        }
+
+        function logoutAdmin() {
+            sessionStorage.removeItem(KEYS.ADMIN_AUTH);
+            if (autoSyncInterval) clearInterval(autoSyncInterval);
+            document.getElementById('admin-app').classList.add('hidden');
+            document.getElementById('login-password').value = '';
+            document.getElementById('login-error').classList.add('hidden');
+            document.getElementById('login-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function setButtonLoading(btnId, isLoading, loadingText = 'Menyimpan...') {
+            const btn = document.getElementById(btnId);
+            if (!btn) return;
+            if (isLoading) {
+                if (!btn.dataset.origHtml) {
+                    btn.dataset.origHtml = btn.innerHTML;
+                }
+                btn.disabled = true;
+                btn.innerHTML = `<svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg><span>${loadingText}</span>`;
+            } else {
+                btn.disabled = false;
+                if (btn.dataset.origHtml) {
+                    btn.innerHTML = btn.dataset.origHtml;
+                    lucide.createIcons();
+                }
+            }
+        }
+
+        function changeAdminPassword(e) {
+            e.preventDefault();
+            const currentPass = document.getElementById('current-admin-pass').value;
+            const newPass = document.getElementById('new-admin-pass').value;
+            const confirmPass = document.getElementById('confirm-admin-pass').value;
+
+            if (currentPass !== getStoredPassword()) {
+                showToast('Password semasa tidak tepat.', 'error', 'Gagal Kemaskini');
+                return;
+            }
+            if (newPass.length < 4) {
+                showToast('Password baharu mestilah sekurang-kurangnya 4 aksara.', 'error', 'Password Terlalu Pendek');
+                return;
+            }
+            if (newPass !== confirmPass) {
+                showToast('Pengesahan password baharu tidak sepadan.', 'error', 'Tidak Sepadan');
+                return;
+            }
+
+            setButtonLoading('btn-update-pass', true, 'Mengemaskini...');
+            setTimeout(() => {
+                localStorage.setItem(KEYS.ADMIN_PASS, newPass);
+                document.getElementById('current-admin-pass').value = '';
+                document.getElementById('new-admin-pass').value = '';
+                document.getElementById('confirm-admin-pass').value = '';
+                setButtonLoading('btn-update-pass', false);
+                showToast('Kata laluan baharu telah disimpan.', 'info', 'Password Berjaya Ditukar');
+            }, 350);
+        }
+
         function updateBoothToggleLabel() {
             const isOpen = document.getElementById('config-booth-open').checked;
             const desc = document.getElementById('status-booth-desc');
@@ -811,84 +900,6 @@
                 select.value = state.currentEvent;
             } else {
                 select.value = 'ALL';
-            }
-        }
-
-        async function syncData(manual = false, silent = false) {
-            if (!state.apiUrl) return;
-            const icon = document.getElementById('sync-icon');
-            const btn = document.getElementById('btn-refresh');
-            if (!silent) {
-                if (icon) icon.classList.add('animate-spin');
-                if (btn) btn.disabled = true;
-            }
-
-            try {
-                // Gunakan parameter masa (?t=) supaya pelayar sentiasa tarik data segar dari Google Sheet
-                const res = await fetch(`${state.apiUrl}?t=${Date.now()}`);
-                const data = await res.json();
-                if (data.success && Array.isArray(data.records)) {
-                    // Tapis keluar sebarang baris konfigurasi (_CONFIG) supaya tidak dikira sebagai pax
-                    state.records = data.records.filter(r => r.event && r.event !== '_CONFIG' && r.nama);
-                    if (Array.isArray(data.sheetNames)) {
-                        state.existingEvents = data.sheetNames.filter(n => n && n !== '_CONFIG');
-                    }
-                    if (data.activeEvent) {
-                        state.currentEvent = data.activeEvent;
-                        localStorage.setItem(KEYS.EVENT_NAME, state.currentEvent);
-                        document.getElementById('config-event-name').value = state.currentEvent;
-                    }
-                    if (typeof data.boothOpen === 'boolean') {
-                        state.boothOpen = data.boothOpen;
-                        localStorage.setItem(KEYS.BOOTH_OPEN, String(state.boothOpen));
-                        document.getElementById('config-booth-open').checked = state.boothOpen;
-                        updateBoothToggleLabel();
-                    }
-                    if (typeof data.kioskSeconds === 'number') {
-                        state.kioskSeconds = data.kioskSeconds;
-                        localStorage.setItem(KEYS.KIOSK_SECONDS, String(state.kioskSeconds));
-                        document.getElementById('config-kiosk-seconds').value = String(state.kioskSeconds);
-                    }
-                    populateEventDropdown();
-                    renderDashboard();
-                    if (manual) showToast('Data terkini berjaya dimuat turun.', 'info');
-                }
-            } catch (err) {
-                console.error(err);
-                if (manual) showToast('Gagal menyambung ke Google Sheet.', 'error');
-            } finally {
-                if (!silent) {
-                    if (icon) icon.classList.remove('animate-spin');
-                    if (btn) btn.disabled = false;
-                }
-            }
-        }
-
-        function populateEventDropdown() {
-            const select = document.getElementById('filter-event-select');
-            const previousVal = select.value;
-            const eventSet = new Set([state.currentEvent, ...state.existingEvents]);
-            state.records.forEach(r => {
-                if (r.event && r.event !== '_CONFIG') eventSet.add(r.event);
-            });
-
-            select.innerHTML = '';
-            const optAll = document.createElement('option');
-            optAll.value = 'ALL';
-            optAll.textContent = 'Semua Event (Keseluruhan)';
-            select.appendChild(optAll);
-
-            eventSet.forEach(ev => {
-                const opt = document.createElement('option');
-                opt.value = ev;
-                opt.textContent = ev === state.currentEvent ? `${ev} (Aktif)` : ev;
-                select.appendChild(opt);
-            });
-
-            if (previousVal && (previousVal === 'ALL' || eventSet.has(previousVal))) {
-                select.value = previousVal;
-            } else {
-                select.value = state.currentEvent;
             }
         }
 
