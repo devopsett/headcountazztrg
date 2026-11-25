@@ -59,8 +59,29 @@
                 transform: translateY(0) scale(1);
             }
         }
+        @keyframes loginModalEnter {
+            0% {
+                opacity: 0;
+                transform: scale(0.95) translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        @keyframes pinShake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
         .animate-dashboard-enter {
             animation: dashboardEnter 0.42s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .animate-login-enter {
+            animation: loginModalEnter 0.36s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .animate-shake {
+            animation: pinShake 0.34s ease-in-out;
         }
     </style>
 </head>
@@ -175,7 +196,7 @@
     </div>
 
     <!-- Modal / Popup Log Masuk Admin (PIN Sahaja) -->
-    <div id="login-modal" class="fixed inset-0 z-50 bg-slate-100/90 dark:bg-[#121612]/90 backdrop-blur-xl flex items-center justify-center p-4 transition-all duration-300 ease-out">
+    <div id="login-modal" class="fixed inset-0 z-50 bg-slate-100/90 dark:bg-[#121612]/90 backdrop-blur-xl flex items-center justify-center p-4 transition-opacity duration-300 ease-out">
         <div id="login-card" class="glass-card bg-white/85 dark:bg-white/[0.04] w-full max-w-sm rounded-[28px] shadow-2xl border border-slate-200/80 dark:border-white/10 p-6 sm:p-7 space-y-5 relative transition-all duration-300 ease-out">
             <button type="button" onclick="toggleTheme()" aria-label="Tukar Tema"
                 class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 dark:bg-white/[0.06] hover:bg-slate-200 dark:hover:bg-white/[0.12] border border-slate-200 dark:border-white/10 text-amber-500 dark:text-amber-400 flex items-center justify-center transition">
@@ -213,7 +234,7 @@
     </div>
 
     <!-- Wrapper Kandungan Admin (Tersembunyi sehingga berjaya Sign In) -->
-    <div id="admin-app" class="hidden flex-1 flex flex-col relative z-10">
+    <div id="admin-app" class="hidden flex-1 flex flex-col relative z-10 transition-all duration-300 ease-out">
 
         <!-- Header Khusus Admin (Glassmorphic) -->
         <header class="glass-card bg-white/80 dark:bg-[#161b16]/85 text-slate-900 dark:text-white border-b border-slate-200/80 dark:border-white/10 sticky top-0 z-30 shadow-sm">
@@ -562,7 +583,9 @@
 
         function handleAdminLogin(e) {
             e.preventDefault();
-            const pin = document.getElementById('login-pin').value.trim();
+            const pinInput = document.getElementById('login-pin');
+            const loginCard = document.getElementById('login-card');
+            const pin = pinInput.value.trim();
             const errEl = document.getElementById('login-error');
 
             if (pin === getStoredPassword()) {
@@ -571,8 +594,13 @@
                 unlockAdminPanel(true);
             } else {
                 errEl.classList.remove('hidden');
-                document.getElementById('login-pin').value = '';
-                document.getElementById('login-pin').focus();
+                if (loginCard) {
+                    loginCard.classList.remove('animate-login-enter', 'animate-shake');
+                    void loginCard.offsetWidth;
+                    loginCard.classList.add('animate-shake');
+                }
+                pinInput.value = '';
+                pinInput.focus();
             }
         }
 
@@ -584,9 +612,9 @@
             const revealDashboard = () => {
                 loginModal.classList.add('hidden');
                 loginModal.classList.remove('opacity-0', 'pointer-events-none');
-                if (loginCard) loginCard.classList.remove('scale-95', 'opacity-0');
+                if (loginCard) loginCard.classList.remove('scale-95', 'opacity-0', 'animate-login-enter');
 
-                adminApp.classList.remove('hidden');
+                adminApp.classList.remove('hidden', 'opacity-0', 'scale-[0.98]', 'pointer-events-none');
                 if (withAnimation) {
                     adminApp.classList.remove('animate-dashboard-enter');
                     void adminApp.offsetWidth;
@@ -613,11 +641,30 @@
         function logoutAdmin() {
             sessionStorage.removeItem(KEYS.ADMIN_AUTH);
             if (autoSyncInterval) clearInterval(autoSyncInterval);
-            document.getElementById('admin-app').classList.add('hidden');
-            document.getElementById('login-pin').value = '';
-            document.getElementById('login-error').classList.add('hidden');
-            document.getElementById('login-modal').classList.remove('hidden');
-            lucide.createIcons();
+
+            const adminApp = document.getElementById('admin-app');
+            const loginModal = document.getElementById('login-modal');
+            const loginCard = document.getElementById('login-card');
+
+            adminApp.classList.remove('animate-dashboard-enter');
+            adminApp.classList.add('opacity-0', 'scale-[0.98]', 'pointer-events-none');
+
+            setTimeout(() => {
+                adminApp.classList.add('hidden');
+                adminApp.classList.remove('opacity-0', 'scale-[0.98]', 'pointer-events-none');
+
+                document.getElementById('login-pin').value = '';
+                document.getElementById('login-error').classList.add('hidden');
+
+                loginModal.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
+                if (loginCard) {
+                    loginCard.classList.remove('scale-95', 'opacity-0', 'animate-login-enter', 'animate-shake');
+                    void loginCard.offsetWidth;
+                    loginCard.classList.add('animate-login-enter');
+                }
+                lucide.createIcons();
+                setTimeout(() => document.getElementById('login-pin').focus(), 100);
+            }, 240);
         }
 
         function setButtonLoading(btnId, isLoading, loadingText = 'Menyimpan...') {
