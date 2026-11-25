@@ -49,6 +49,19 @@
         .ambient-glow {
             background: radial-gradient(circle at 50% 0%, rgba(128, 189, 56, 0.14) 0%, rgba(18, 22, 18, 0) 65%);
         }
+        @keyframes dashboardEnter {
+            0% {
+                opacity: 0;
+                transform: translateY(14px) scale(0.99);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        .animate-dashboard-enter {
+            animation: dashboardEnter 0.42s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
     </style>
 </head>
 <body class="bg-slate-100 dark:bg-[#121612] text-slate-900 dark:text-slate-100 font-sans antialiased min-h-screen flex flex-col selection:bg-[#80bd38] selection:text-slate-950 transition-colors duration-300 relative overflow-x-hidden">
@@ -162,8 +175,8 @@
     </div>
 
     <!-- Modal / Popup Log Masuk Admin (PIN Sahaja) -->
-    <div id="login-modal" class="fixed inset-0 z-50 bg-slate-100/90 dark:bg-[#121612]/90 backdrop-blur-xl flex items-center justify-center p-4">
-        <div class="glass-card bg-white/85 dark:bg-white/[0.04] w-full max-w-sm rounded-[28px] shadow-2xl border border-slate-200/80 dark:border-white/10 p-6 sm:p-7 space-y-5 relative">
+    <div id="login-modal" class="fixed inset-0 z-50 bg-slate-100/90 dark:bg-[#121612]/90 backdrop-blur-xl flex items-center justify-center p-4 transition-all duration-300 ease-out">
+        <div id="login-card" class="glass-card bg-white/85 dark:bg-white/[0.04] w-full max-w-sm rounded-[28px] shadow-2xl border border-slate-200/80 dark:border-white/10 p-6 sm:p-7 space-y-5 relative transition-all duration-300 ease-out">
             <button type="button" onclick="toggleTheme()" aria-label="Tukar Tema"
                 class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 dark:bg-white/[0.06] hover:bg-slate-200 dark:hover:bg-white/[0.12] border border-slate-200 dark:border-white/10 text-amber-500 dark:text-amber-400 flex items-center justify-center transition">
                 <span id="themeIconLoginWrap" class="inline-flex items-center justify-center"><i data-lucide="sun" class="w-4 h-4"></i></span>
@@ -555,8 +568,7 @@
             if (pin === getStoredPassword()) {
                 errEl.classList.add('hidden');
                 sessionStorage.setItem(KEYS.ADMIN_AUTH, 'true');
-                unlockAdminPanel();
-                showToast('Anda berjaya log masuk ke Panel Admin Azzuha.', 'info', 'Log Masuk Berjaya');
+                unlockAdminPanel(true);
             } else {
                 errEl.classList.remove('hidden');
                 document.getElementById('login-pin').value = '';
@@ -564,15 +576,38 @@
             }
         }
 
-        function unlockAdminPanel() {
-            document.getElementById('login-modal').classList.add('hidden');
-            document.getElementById('admin-app').classList.remove('hidden');
-            populateConfigEventDropdown();
-            document.getElementById('config-booth-open').checked = state.currentEvent !== '-' && state.boothOpen;
-            document.getElementById('config-kiosk-seconds').value = String(state.kioskSeconds);
-            updateBoothToggleLabel();
-            initData();
-            lucide.createIcons();
+        function unlockAdminPanel(withAnimation = false) {
+            const loginModal = document.getElementById('login-modal');
+            const loginCard = document.getElementById('login-card');
+            const adminApp = document.getElementById('admin-app');
+
+            const revealDashboard = () => {
+                loginModal.classList.add('hidden');
+                loginModal.classList.remove('opacity-0', 'pointer-events-none');
+                if (loginCard) loginCard.classList.remove('scale-95', 'opacity-0');
+
+                adminApp.classList.remove('hidden');
+                if (withAnimation) {
+                    adminApp.classList.remove('animate-dashboard-enter');
+                    void adminApp.offsetWidth;
+                    adminApp.classList.add('animate-dashboard-enter');
+                }
+
+                populateConfigEventDropdown();
+                document.getElementById('config-booth-open').checked = state.currentEvent !== '-' && state.boothOpen;
+                document.getElementById('config-kiosk-seconds').value = String(state.kioskSeconds);
+                updateBoothToggleLabel();
+                initData();
+                lucide.createIcons();
+            };
+
+            if (withAnimation) {
+                loginModal.classList.add('opacity-0', 'pointer-events-none');
+                if (loginCard) loginCard.classList.add('scale-95', 'opacity-0');
+                setTimeout(revealDashboard, 260);
+            } else {
+                revealDashboard();
+            }
         }
 
         function logoutAdmin() {
