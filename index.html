@@ -309,7 +309,7 @@
                         state.currentEvent = data.activeEvent;
                         localStorage.setItem(KEYS.EVENT_NAME, state.currentEvent);
                         document.getElementById('banner-event-name').textContent =
-                            state.currentEvent === '-' ? '- (Tiada Event Aktif)' : state.currentEvent;
+                            state.currentEvent === '-' ? 'Tiada Event Aktif' : state.currentEvent;
                     }
                     if (typeof data.boothOpen === 'boolean') {
                         state.isOpen = state.currentEvent === '-' ? false : data.boothOpen;
@@ -329,7 +329,7 @@
         window.addEventListener('DOMContentLoaded', async () => {
             lucide.createIcons();
             document.getElementById('banner-event-name').textContent =
-                state.currentEvent === '-' ? '- (Tiada Event Aktif)' : state.currentEvent;
+                state.currentEvent === '-' ? 'Tiada Event Aktif' : state.currentEvent;
             applyBoothStatus();
 
             await fetchRemoteConfig();
