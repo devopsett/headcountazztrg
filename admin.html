@@ -1,86 +1,103 @@
 <!DOCTYPE html>
-<html lang="ms">
+<html lang="ms" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel — Azzuha Group Travel & Tours</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter -->
+    <!-- Google Fonts: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
                     colors: {
+                        brand: {
+                            lime: '#80bd38',
+                            limeGlow: '#95d647',
+                            darkBg: '#121612',
+                        },
                         azzuha: {
-                            50: '#ecfdf5',
-                            100: '#d1fae5',
-                            500: '#10b981',
-                            600: '#059669',
-                            700: '#047857',
-                            800: '#065f46',
-                            900: '#064e3b',
+                            50: '#f4fbea',
+                            100: '#e4f5ce',
+                            500: '#80bd38',
+                            600: '#6ba329',
+                            700: '#538020',
+                            800: '#3f6319',
+                            900: '#2d4712',
                         }
                     }
                 }
             }
         }
     </script>
+    <style>
+        .glass-card {
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+        .ambient-glow {
+            background: radial-gradient(circle at 50% 0%, rgba(128, 189, 56, 0.14) 0%, rgba(18, 22, 18, 0) 65%);
+        }
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-900 font-sans antialiased min-h-screen flex flex-col">
+<body class="bg-slate-100 dark:bg-[#121612] text-slate-900 dark:text-slate-100 font-sans antialiased min-h-screen flex flex-col selection:bg-[#80bd38] selection:text-slate-950 transition-colors duration-300 relative">
 
-    <!-- Modal Popup Status (Tengah Skrin - Jelas & Tidak Melindungi Butang) -->
-    <div id="status-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4" onclick="closeStatusModal()">
-        <div class="bg-white w-full max-w-xs sm:max-w-sm rounded-3xl shadow-2xl border border-slate-200 p-6 text-center space-y-4 transform transition-all" onclick="event.stopPropagation()">
-            <div id="status-modal-icon" class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-xs">
+    <div class="fixed inset-0 ambient-glow pointer-events-none"></div>
+
+    <!-- Modal Popup Status -->
+    <div id="status-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4" onclick="closeStatusModal()">
+        <div class="glass-card bg-white/95 dark:bg-[#1a201a]/95 w-full max-w-xs sm:max-w-sm rounded-[28px] shadow-2xl border border-slate-200 dark:border-white/10 p-6 text-center space-y-4 transform transition-all" onclick="event.stopPropagation()">
+            <div id="status-modal-icon" class="w-14 h-14 rounded-2xl bg-[#80bd38]/20 text-[#80bd38] flex items-center justify-center mx-auto">
                 <i data-lucide="check-circle-2" class="w-8 h-8"></i>
             </div>
             <div class="space-y-1">
-                <h3 id="status-modal-title" class="text-base sm:text-lg font-extrabold text-slate-900">Berjaya</h3>
-                <p id="status-modal-message" class="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed"></p>
+                <h3 id="status-modal-title" class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">Berjaya</h3>
+                <p id="status-modal-message" class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed"></p>
             </div>
             <button type="button" id="status-modal-btn" onclick="closeStatusModal()"
-                class="w-full py-3 px-4 rounded-xl bg-azzuha-600 hover:bg-azzuha-700 text-white font-extrabold text-sm shadow-sm transition-all">
+                class="w-full py-3 px-4 rounded-2xl bg-[#80bd38] hover:bg-[#8fd143] text-slate-950 font-extrabold text-sm shadow-sm transition-all">
                 OK, Faham
             </button>
         </div>
     </div>
 
     <!-- Modal Pengesahan Nama Event Sudah Wujud -->
-    <div id="duplicate-event-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4" onclick="closeDuplicateModal()">
-        <div class="bg-white w-full max-w-xs sm:max-w-sm rounded-3xl shadow-2xl border border-slate-200 p-6 text-center space-y-4 transform transition-all" onclick="event.stopPropagation()">
-            <div class="w-14 h-14 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto shadow-xs">
+    <div id="duplicate-event-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4" onclick="closeDuplicateModal()">
+        <div class="glass-card bg-white/95 dark:bg-[#1a201a]/95 w-full max-w-xs sm:max-w-sm rounded-[28px] shadow-2xl border border-slate-200 dark:border-white/10 p-6 text-center space-y-4 transform transition-all" onclick="event.stopPropagation()">
+            <div class="w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-500 flex items-center justify-center mx-auto">
                 <i data-lucide="alert-triangle" class="w-8 h-8"></i>
             </div>
             <div class="space-y-1.5">
-                <h3 class="text-base sm:text-lg font-extrabold text-slate-900">Nama Event Sudah Wujud</h3>
-                <p id="duplicate-event-message" class="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed"></p>
+                <h3 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">Nama Event Sudah Wujud</h3>
+                <p id="duplicate-event-message" class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed"></p>
             </div>
             <div class="flex flex-col gap-2 pt-1">
                 <button type="button" onclick="confirmUseExistingEvent()"
-                    class="w-full py-3 px-4 rounded-xl bg-azzuha-600 hover:bg-azzuha-700 text-white font-extrabold text-xs sm:text-sm shadow-sm transition-all">
+                    class="w-full py-3 px-4 rounded-2xl bg-[#80bd38] hover:bg-[#8fd143] text-slate-950 font-extrabold text-xs sm:text-sm shadow-sm transition-all">
                     Teruskan &amp; Guna Tab Sedia Ada
                 </button>
                 <button type="button" onclick="closeDuplicateModal()"
-                    class="w-full py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs sm:text-sm transition-all">
+                    class="w-full py-2.5 px-4 rounded-2xl bg-slate-100 dark:bg-white/[0.06] hover:bg-slate-200 dark:hover:bg-white/[0.12] text-slate-700 dark:text-slate-200 font-bold text-xs sm:text-sm transition-all">
                     Tukar Nama Event Lain
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Modal Edit Rekod Jemaah (B3) -->
-    <div id="edit-record-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4" onclick="closeEditModal()">
-        <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl border border-slate-200 p-6 space-y-4" onclick="event.stopPropagation()">
+    <!-- Modal Edit Rekod Jemaah -->
+    <div id="edit-record-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4" onclick="closeEditModal()">
+        <div class="glass-card bg-white/95 dark:bg-[#1a201a]/95 w-full max-w-sm rounded-[28px] shadow-2xl border border-slate-200 dark:border-white/10 p-6 space-y-4" onclick="event.stopPropagation()">
             <div class="flex items-center justify-between">
-                <h3 class="text-base font-extrabold text-slate-900">Kemaskini Rekod Jemaah</h3>
-                <button type="button" onclick="closeEditModal()" class="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100">
+                <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Kemaskini Rekod Jemaah</h3>
+                <button type="button" onclick="closeEditModal()" class="p-1.5 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
@@ -88,32 +105,32 @@
                 <input type="hidden" id="edit-record-id">
                 <input type="hidden" id="edit-record-event">
                 <div>
-                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Pakej</label>
-                    <select id="edit-record-pakej" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-bold">
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Pakej</label>
+                    <select id="edit-record-pakej" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-black/40 border border-slate-300 dark:border-white/15 rounded-xl text-sm font-bold text-slate-900 dark:text-white focus:border-[#80bd38] focus:outline-none">
                         <option value="UMRAH">UMRAH</option>
                         <option value="HAJI">HAJI</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Nama Jemaah</label>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Nama Jemaah</label>
                     <input type="text" id="edit-record-nama" required oninput="this.value = this.value.toUpperCase()"
-                        class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-bold uppercase">
+                        class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-black/40 border border-slate-300 dark:border-white/15 rounded-xl text-sm font-bold uppercase text-slate-900 dark:text-white focus:border-[#80bd38] focus:outline-none">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">No. Telefon</label>
+                        <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">No. Telefon</label>
                         <input type="tel" id="edit-record-phone" required
-                            class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-bold">
+                            class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-black/40 border border-slate-300 dark:border-white/15 rounded-xl text-sm font-bold text-slate-900 dark:text-white focus:border-[#80bd38] focus:outline-none">
                     </div>
                     <div>
-                        <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Bilangan Pax</label>
+                        <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Bilangan Pax</label>
                         <input type="number" id="edit-record-pax" min="1" max="100" required
-                            class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-extrabold text-center">
+                            class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-black/40 border border-slate-300 dark:border-white/15 rounded-xl text-sm font-extrabold text-center text-slate-900 dark:text-white focus:border-[#80bd38] focus:outline-none">
                     </div>
                 </div>
                 <div class="pt-2 flex gap-2">
-                    <button type="button" onclick="closeEditModal()" class="flex-1 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold">Batal</button>
-                    <button type="submit" id="btn-save-edit" class="flex-1 py-2.5 rounded-xl bg-azzuha-600 hover:bg-azzuha-700 text-white text-xs font-extrabold flex items-center justify-center gap-1.5">
+                    <button type="button" onclick="closeEditModal()" class="flex-1 py-2.5 rounded-xl bg-slate-100 dark:bg-white/[0.06] hover:bg-slate-200 dark:hover:bg-white/[0.12] text-slate-700 dark:text-slate-200 text-xs font-bold">Batal</button>
+                    <button type="submit" id="btn-save-edit" class="flex-1 py-2.5 rounded-xl bg-[#80bd38] hover:bg-[#8fd143] text-slate-950 text-xs font-extrabold flex items-center justify-center gap-1.5">
                         <span>Simpan</span>
                     </button>
                 </div>
@@ -121,18 +138,18 @@
         </div>
     </div>
 
-    <!-- Modal Pengesahan Padam Rekod (B3) -->
-    <div id="delete-record-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4" onclick="closeDeleteModal()">
-        <div class="bg-white w-full max-w-xs sm:max-w-sm rounded-3xl shadow-2xl border border-slate-200 p-6 text-center space-y-4" onclick="event.stopPropagation()">
-            <div class="w-14 h-14 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
+    <!-- Modal Pengesahan Padam Rekod -->
+    <div id="delete-record-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4" onclick="closeDeleteModal()">
+        <div class="glass-card bg-white/95 dark:bg-[#1a201a]/95 w-full max-w-xs sm:max-w-sm rounded-[28px] shadow-2xl border border-slate-200 dark:border-white/10 p-6 text-center space-y-4" onclick="event.stopPropagation()">
+            <div class="w-14 h-14 rounded-2xl bg-rose-500/20 text-rose-500 flex items-center justify-center mx-auto">
                 <i data-lucide="trash-2" class="w-7 h-7"></i>
             </div>
             <div class="space-y-1">
-                <h3 class="text-base font-extrabold text-slate-900">Padam Rekod Jemaah?</h3>
-                <p id="delete-record-message" class="text-xs sm:text-sm text-slate-600 font-medium"></p>
+                <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Padam Rekod Jemaah?</h3>
+                <p id="delete-record-message" class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium"></p>
             </div>
             <div class="flex gap-2">
-                <button type="button" onclick="closeDeleteModal()" class="flex-1 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold">Batal</button>
+                <button type="button" onclick="closeDeleteModal()" class="flex-1 py-2.5 rounded-xl bg-slate-100 dark:bg-white/[0.06] hover:bg-slate-200 dark:hover:bg-white/[0.12] text-slate-700 dark:text-slate-200 text-xs font-bold">Batal</button>
                 <button type="button" id="btn-confirm-delete" onclick="confirmDeleteRecord()" class="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-extrabold flex items-center justify-center gap-1.5">
                     <span>Ya, Padam</span>
                 </button>
@@ -141,31 +158,35 @@
     </div>
 
     <!-- Modal / Popup Log Masuk Admin -->
-    <div id="login-modal" class="fixed inset-0 z-50 bg-azzuha-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl border border-slate-200 p-6 sm:p-7 space-y-5">
+    <div id="login-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-xl flex items-center justify-center p-4">
+        <div class="glass-card bg-white/95 dark:bg-[#1a201a]/90 w-full max-w-sm rounded-[28px] shadow-2xl border border-slate-200 dark:border-white/10 p-6 sm:p-7 space-y-5">
             <div class="text-center space-y-2">
-                <div class="w-14 h-14 rounded-2xl bg-azzuha-600 text-white flex items-center justify-center mx-auto shadow-md shadow-azzuha-600/25">
-                    <i data-lucide="lock" class="w-7 h-7"></i>
+                <div class="relative inline-block">
+                    <div class="w-16 h-16 rounded-full bg-white p-1 shadow-md mx-auto flex items-center justify-center">
+                        <div class="w-full h-full rounded-full bg-gradient-to-br from-[#80bd38] to-[#5e9422] flex items-center justify-center text-white">
+                            <i data-lucide="lock" class="w-7 h-7"></i>
+                        </div>
+                    </div>
                 </div>
-                <h2 class="text-lg font-extrabold text-slate-900">Log Masuk Panel Admin</h2>
-                <p class="text-xs text-slate-500">Azzuha Group Travel & Tours • Cawangan Terengganu</p>
+                <h2 class="text-lg font-extrabold text-slate-900 dark:text-white">Log Masuk Panel Admin</h2>
+                <p class="text-xs font-bold text-[#6ba329] dark:text-[#8fd143]">@azzuhaterengganu</p>
             </div>
 
             <form onsubmit="handleAdminLogin(event)" class="space-y-4">
                 <div>
-                    <label for="login-username" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Username</label>
+                    <label for="login-username" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Username</label>
                     <input type="text" id="login-username" required autocomplete="username" placeholder="Masukkan username"
-                        class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-azzuha-500">
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-black/40 border border-slate-300 dark:border-white/15 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white focus:bg-white dark:focus:bg-black/60 focus:outline-none focus:ring-2 focus:ring-[#80bd38]">
                 </div>
                 <div>
-                    <label for="login-password" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Password</label>
+                    <label for="login-password" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Password</label>
                     <input type="password" id="login-password" required autocomplete="current-password" placeholder="Masukkan password"
-                        class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-azzuha-500">
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-black/40 border border-slate-300 dark:border-white/15 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white focus:bg-white dark:focus:bg-black/60 focus:outline-none focus:ring-2 focus:ring-[#80bd38]">
                 </div>
-                <p id="login-error" class="hidden text-xs font-semibold text-rose-600 text-center bg-rose-50 py-2 px-3 rounded-lg border border-rose-200">
+                <p id="login-error" class="hidden text-xs font-semibold text-rose-500 text-center bg-rose-500/10 py-2 px-3 rounded-xl border border-rose-500/20">
                     Username atau password tidak sah.
                 </p>
-                <button type="submit" class="w-full py-3.5 px-4 rounded-xl bg-azzuha-600 hover:bg-azzuha-700 text-white font-extrabold text-sm shadow-md shadow-azzuha-600/25 flex items-center justify-center gap-2 transition-all">
+                <button type="submit" class="w-full py-3.5 px-4 rounded-2xl bg-[#80bd38] hover:bg-[#8fd143] text-slate-950 font-extrabold text-sm shadow-lg shadow-[#80bd38]/25 flex items-center justify-center gap-2 transition-all">
                     <i data-lucide="log-in" class="w-4 h-4"></i>
                     <span>Sign In</span>
                 </button>
@@ -173,49 +194,64 @@
         </div>
     </div>
 
-    <!-- Wrapper Kandungan Admin (Tersembunyi sehingga berjaya Sign In) -->
-    <div id="admin-app" class="hidden flex-1 flex flex-col">
+    <!-- Wrapper Kandungan Admin -->
+    <div id="admin-app" class="hidden flex-1 flex flex-col relative z-10">
 
-    <!-- Header Khusus Admin (Tema Azzuha Emerald) -->
-    <header class="bg-gradient-to-r from-azzuha-900 via-azzuha-800 to-azzuha-700 text-white border-b border-azzuha-700/60 sticky top-0 z-30 shadow-md">
+    <!-- Header Glassmorphic Admin -->
+    <header class="glass-card bg-white/80 dark:bg-[#121612]/80 border-b border-slate-200/80 dark:border-white/10 sticky top-0 z-30">
         <div class="max-w-4xl mx-auto px-4 py-3 sm:py-0 sm:h-16 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
             <div class="flex items-center justify-between gap-2 min-w-0">
                 <div class="flex items-center gap-2.5 min-w-0">
-                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/15 border border-white/20 flex items-center justify-center text-white shrink-0 shadow-sm">
-                        <i data-lucide="shield-check" class="w-5 h-5"></i>
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white p-0.5 shadow-sm flex items-center justify-center shrink-0">
+                        <div class="w-full h-full rounded-full bg-gradient-to-br from-[#80bd38] to-[#5e9422] flex items-center justify-center text-white">
+                            <i data-lucide="shield-check" class="w-5 h-5"></i>
+                        </div>
                     </div>
                     <div class="min-w-0">
                         <div class="flex items-center gap-1.5 flex-wrap">
-                            <span class="font-extrabold text-white text-sm sm:text-base tracking-tight leading-tight">Azzuha Group Travel &amp; Tours</span>
-                            <span id="sync-badge" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white/20 text-white border border-white/25 shrink-0">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-300"></span>
+                            <span class="font-extrabold text-slate-900 dark:text-white text-sm sm:text-base tracking-tight leading-tight">Headcount Event</span>
+                            <span id="sync-badge" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#80bd38]/15 text-[#5d8f22] dark:text-[#9ee04f] border border-[#80bd38]/30 shrink-0">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#80bd38] animate-pulse"></span>
                                 Live
                             </span>
                         </div>
-                        <p class="text-[11px] sm:text-xs font-medium text-azzuha-100 leading-tight mt-0.5">Panel Admin • Cawangan Terengganu</p>
+                        <p class="text-[11px] sm:text-xs font-bold text-[#6ba329] dark:text-[#8fd143] leading-tight mt-0.5">Panel Admin • @azzuhaterengganu</p>
                     </div>
                 </div>
 
-                <!-- Butang Log Keluar Mobile -->
-                <button onclick="logoutAdmin()" title="Log Keluar" class="sm:hidden p-2 rounded-xl bg-azzuha-950/40 border border-white/15 text-rose-200 hover:bg-rose-500/25 hover:text-white transition-all shrink-0">
+                <!-- Action Buttons Mobile (Tema & Log Keluar) -->
+                <div class="flex sm:hidden items-center gap-1.5 shrink-0">
+                    <button type="button" onclick="toggleTheme()" aria-label="Tukar Tema"
+                        class="w-9 h-9 rounded-full bg-slate-100 dark:bg-white/[0.06] border border-slate-200 dark:border-white/10 text-amber-500 dark:text-amber-400 flex items-center justify-center">
+                        <i id="themeIconMobile" data-lucide="sun" class="w-4 h-4"></i>
+                    </button>
+                    <button onclick="logoutAdmin()" title="Log Keluar" class="w-9 h-9 rounded-full bg-rose-500/15 border border-rose-500/25 text-rose-500 dark:text-rose-400 flex items-center justify-center transition-all">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Navigasi Admin (Headcount, Tetapan, Tema & Log Keluar Desktop) -->
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+                <nav class="grid grid-cols-2 sm:flex items-center gap-1.5 bg-slate-100/90 dark:bg-white/[0.05] border border-slate-200 dark:border-white/10 p-1 rounded-2xl w-full sm:w-auto shrink-0">
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="justify-center px-3.5 py-1.5 rounded-xl text-xs font-extrabold bg-[#80bd38] text-slate-950 shadow-sm transition-all flex items-center gap-1.5">
+                        <i data-lucide="bar-chart-3" class="w-3.5 h-3.5"></i>
+                        <span>Headcount</span>
+                    </button>
+                    <button onclick="switchTab('setup')" id="nav-setup" class="justify-center px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all flex items-center gap-1.5">
+                        <i data-lucide="settings" class="w-3.5 h-3.5"></i>
+                        <span>Tetapan</span>
+                    </button>
+                </nav>
+
+                <button type="button" onclick="toggleTheme()" aria-label="Tukar Tema"
+                    class="hidden sm:flex w-9 h-9 rounded-full bg-slate-100 dark:bg-white/[0.05] hover:bg-slate-200 dark:hover:bg-white/[0.1] border border-slate-200 dark:border-white/10 text-amber-500 dark:text-amber-400 items-center justify-center shrink-0 transition">
+                    <i id="themeIconDesktop" data-lucide="sun" class="w-4 h-4"></i>
+                </button>
+                <button onclick="logoutAdmin()" title="Log Keluar" class="hidden sm:flex w-9 h-9 rounded-full bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/25 text-rose-500 dark:text-rose-400 items-center justify-center shrink-0 transition">
                     <i data-lucide="log-out" class="w-4 h-4"></i>
                 </button>
             </div>
-
-            <!-- Navigasi Admin (Headcount, Tetapan & Log Keluar Desktop) -->
-            <nav class="grid grid-cols-2 sm:flex items-center gap-1.5 bg-azzuha-950/40 border border-white/15 p-1 rounded-xl w-full sm:w-auto shrink-0">
-                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="justify-center px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-azzuha-900 shadow-sm transition-all flex items-center gap-1.5">
-                    <i data-lucide="bar-chart-3" class="w-3.5 h-3.5"></i>
-                    <span>Headcount</span>
-                </button>
-                <button onclick="switchTab('setup')" id="nav-setup" class="justify-center px-3 py-1.5 rounded-lg text-xs font-semibold text-azzuha-100 hover:text-white transition-all flex items-center gap-1.5">
-                    <i data-lucide="settings" class="w-3.5 h-3.5"></i>
-                    <span>Tetapan</span>
-                </button>
-                <button onclick="logoutAdmin()" title="Log Keluar" class="hidden sm:flex px-2.5 py-1.5 rounded-lg text-xs font-semibold text-rose-200 hover:bg-rose-500/25 hover:text-white transition-all items-center gap-1">
-                    <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
-                </button>
-            </nav>
         </div>
     </header>
 
@@ -228,22 +264,22 @@
         <section id="tab-dashboard" class="space-y-5">
 
             <!-- Penapis Event & Butang Tindakan -->
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="glass-card bg-white/85 dark:bg-white/[0.04] rounded-[24px] border border-slate-200/80 dark:border-white/10 shadow-lg shadow-black/5 dark:shadow-black/30 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div class="flex-1 min-w-0">
-                    <label for="filter-event-select" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Pilih Event / Tab Sheet</label>
+                    <label for="filter-event-select" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Pilih Event / Tab Sheet</label>
                     <select id="filter-event-select" onchange="renderDashboard()"
-                        class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-bold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-azzuha-500">
+                        class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-black/40 border border-slate-300 dark:border-white/15 rounded-xl text-sm font-bold text-slate-800 dark:text-white focus:bg-white dark:focus:bg-black/60 focus:outline-none focus:ring-2 focus:ring-[#80bd38]">
                         <option value="ALL">Semua Event (Keseluruhan)</option>
                     </select>
                 </div>
                 <div class="flex items-center gap-2 sm:self-end shrink-0">
-                    <button type="button" id="btn-refresh" onclick="syncData(true)" class="px-3.5 py-2.5 rounded-xl bg-azzuha-50 hover:bg-azzuha-100 text-azzuha-800 border border-azzuha-200 text-xs font-bold flex items-center gap-1.5 transition-colors">
-                        <span id="sync-icon" class="inline-flex items-center justify-center">
+                    <button type="button" id="btn-refresh" onclick="syncData(true)" class="px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-white/[0.06] hover:bg-slate-200 dark:hover:bg-white/[0.12] text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-white/10 text-xs font-bold flex items-center gap-1.5 transition-colors">
+                        <span id="sync-icon" class="inline-flex items-center justify-center text-[#80bd38]">
                             <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
                         </span>
                         <span>Refresh</span>
                     </button>
-                    <button type="button" onclick="exportCSV()" class="px-3.5 py-2.5 rounded-xl bg-azzuha-600 hover:bg-azzuha-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-colors">
+                    <button type="button" onclick="exportCSV()" class="px-4 py-2.5 rounded-xl bg-[#80bd38] hover:bg-[#8fd143] text-slate-950 text-xs font-extrabold flex items-center gap-1.5 shadow-md shadow-[#80bd38]/20 transition-colors">
                         <i data-lucide="download" class="w-3.5 h-3.5"></i>
                         <span>Muat Turun CSV</span>
                     </button>
@@ -253,24 +289,25 @@
             <!-- Kad Statistik Headcount -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
                 <!-- Total Pax -->
-                <div class="bg-gradient-to-br from-azzuha-800 to-azzuha-600 rounded-2xl p-5 text-white shadow-md">
+                <div class="glass-card bg-gradient-to-br from-[#80bd38] to-[#5a8c20] rounded-[24px] p-5 text-slate-950 shadow-lg shadow-[#80bd38]/20">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold uppercase tracking-wider text-azzuha-100">Jumlah Keseluruhan</span>
-                        <i data-lucide="users" class="w-5 h-5 text-azzuha-200"></i>
+                        <span class="text-xs font-extrabold uppercase tracking-wider text-slate-900/80">Jumlah Keseluruhan</span>
+                        <div class="w-8 h-8 rounded-xl bg-black/15 text-slate-950 flex items-center justify-center">
+                            <i data-lucide="users" class="w-4 h-4"></i>
+                        </div>
                     </div>
                     <div class="mt-2 flex items-baseline gap-2">
-                        <span id="stat-total-pax" class="text-3xl sm:text-4xl font-extrabold">0</span>
-                        <span class="text-xs font-semibold text-azzuha-100">Pax</span>
+                        <span id="stat-total-pax" class="text-3xl sm:text-4xl font-extrabold text-slate-950">0</span>
+                        <span class="text-xs font-extrabold text-slate-900/80">Pax</span>
                     </div>
-                    <p id="stat-total-rekod" class="text-xs text-azzuha-100/90 mt-1">0 rekod</p>
+                    <p id="stat-total-rekod" class="text-xs font-bold text-slate-900/80 mt-1">0 rekod</p>
                 </div>
 
                 <!-- Pax Umrah -->
-                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+                <div class="glass-card bg-white/85 dark:bg-white/[0.04] rounded-[24px] border border-slate-200/80 dark:border-white/10 p-5 shadow-lg shadow-black/5 dark:shadow-black/30">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold uppercase tracking-wider text-azzuha-700">Pakej Umrah</span>
-                        <div class="w-8 h-8 rounded-lg bg-azzuha-50 text-azzuha-600 flex items-center justify-center">
-                            <!-- Ikon Kaabah SVG -->
+                        <span class="text-xs font-extrabold uppercase tracking-wider text-[#6ba329] dark:text-[#9ee04f]">Pakej Umrah</span>
+                        <div class="w-8 h-8 rounded-xl bg-[#80bd38]/15 text-[#6ba329] dark:text-[#9ee04f] flex items-center justify-center">
                             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M4 6l8-3 8 3v12l-8 3-8-3V6z"/>
                                 <path d="M4 9l8 3 8-3"/>
@@ -279,18 +316,17 @@
                         </div>
                     </div>
                     <div class="mt-2 flex items-baseline gap-2">
-                        <span id="stat-umrah-pax" class="text-3xl font-extrabold text-slate-900">0</span>
-                        <span class="text-xs font-semibold text-slate-500">Pax</span>
+                        <span id="stat-umrah-pax" class="text-3xl font-extrabold text-slate-900 dark:text-white">0</span>
+                        <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Pax</span>
                     </div>
-                    <p id="stat-umrah-rekod" class="text-xs text-slate-500 mt-1">0 keluarga</p>
+                    <p id="stat-umrah-rekod" class="text-xs text-slate-500 dark:text-slate-400 mt-1">0 keluarga</p>
                 </div>
 
                 <!-- Pax Haji -->
-                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+                <div class="glass-card bg-white/85 dark:bg-white/[0.04] rounded-[24px] border border-slate-200/80 dark:border-white/10 p-5 shadow-lg shadow-black/5 dark:shadow-black/30">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold uppercase tracking-wider text-amber-700">Pakej Haji</span>
-                        <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
-                            <!-- Ikon Masjid / Kubah SVG -->
+                        <span class="text-xs font-extrabold uppercase tracking-wider text-amber-600 dark:text-amber-400">Pakej Haji</span>
+                        <div class="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center">
                             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M12 2c-3.5 3-5 5.5-5 8h10c0-2.5-1.5-5-5-8z"/>
                                 <path d="M4 10h16v11H4z"/>
@@ -299,59 +335,59 @@
                         </div>
                     </div>
                     <div class="mt-2 flex items-baseline gap-2">
-                        <span id="stat-haji-pax" class="text-3xl font-extrabold text-slate-900">0</span>
-                        <span class="text-xs font-semibold text-slate-500">Pax</span>
+                        <span id="stat-haji-pax" class="text-3xl font-extrabold text-slate-900 dark:text-white">0</span>
+                        <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Pax</span>
                     </div>
-                    <p id="stat-haji-rekod" class="text-xs text-slate-500 mt-1">0 keluarga</p>
+                    <p id="stat-haji-rekod" class="text-xs text-slate-500 dark:text-slate-400 mt-1">0 keluarga</p>
                 </div>
             </div>
 
             <!-- Senarai Rekod Jemaah -->
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <div class="p-4 border-b border-slate-100 space-y-3">
+            <div class="glass-card bg-white/85 dark:bg-white/[0.04] rounded-[24px] border border-slate-200/80 dark:border-white/10 shadow-lg shadow-black/5 dark:shadow-black/30 overflow-hidden">
+                <div class="p-4 border-b border-slate-200/70 dark:border-white/10 space-y-3">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div>
                             <div class="flex items-center gap-2">
-                                <h3 class="text-sm font-extrabold text-slate-900">Senarai Pendaftaran Jemaah</h3>
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-azzuha-700 border border-emerald-200">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <h3 class="text-sm font-extrabold text-slate-900 dark:text-white">Senarai Pendaftaran Jemaah</h3>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#80bd38]/15 text-[#5d8f22] dark:text-[#9ee04f] border border-[#80bd38]/30">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-[#80bd38] animate-pulse"></span>
                                     Auto-Sync 10s
                                 </span>
                             </div>
-                            <p class="text-xs text-slate-500">Rekod terkini yang dihantar dari borang jemaah</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Rekod terkini yang dihantar dari borang jemaah</p>
                         </div>
                         <div class="relative w-full sm:w-64">
                             <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
                             <input type="text" id="search-input" oninput="renderDashboard()" placeholder="Cari nama / no. telefon..."
-                                class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-azzuha-500">
+                                class="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/15 rounded-xl text-xs font-medium text-slate-900 dark:text-white focus:bg-white dark:focus:bg-black/60 focus:outline-none focus:ring-2 focus:ring-[#80bd38]">
                         </div>
                     </div>
 
-                    <!-- B2: Penapis Mengikut Pakej -->
+                    <!-- Penapis Mengikut Pakej -->
                     <div class="flex items-center gap-1.5 overflow-x-auto pb-0.5">
                         <button type="button" onclick="setPakejFilter('ALL')" id="filter-pkg-ALL"
-                            class="px-3 py-1.5 rounded-xl text-xs font-extrabold bg-azzuha-600 text-white shadow-xs transition-all">
+                            class="px-3.5 py-1.5 rounded-full text-xs font-extrabold bg-[#80bd38] text-slate-950 shadow-sm transition-all">
                             Semua Pakej
                         </button>
                         <button type="button" onclick="setPakejFilter('UMRAH')" id="filter-pkg-UMRAH"
-                            class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all">
+                            class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-slate-100 dark:bg-white/[0.06] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/[0.12] transition-all">
                             Umrah Sahaja
                         </button>
                         <button type="button" onclick="setPakejFilter('HAJI')" id="filter-pkg-HAJI"
-                            class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all">
+                            class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-slate-100 dark:bg-white/[0.06] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/[0.12] transition-all">
                             Haji Sahaja
                         </button>
                     </div>
                 </div>
 
-                <div id="jemaah-list" class="divide-y divide-slate-100"></div>
+                <div id="jemaah-list" class="divide-y divide-slate-100 dark:divide-white/5"></div>
 
                 <div id="empty-list" class="hidden p-10 text-center space-y-2">
-                    <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+                    <div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-white/[0.06] text-slate-400 flex items-center justify-center mx-auto">
                         <i data-lucide="inbox" class="w-6 h-6"></i>
                     </div>
-                    <p class="text-sm font-bold text-slate-700">Tiada rekod jemaah dijumpai</p>
-                    <p class="text-xs text-slate-500">Rekod akan dipaparkan di sini sebaik sahaja jemaah mendaftar.</p>
+                    <p class="text-sm font-bold text-slate-700 dark:text-slate-200">Tiada rekod jemaah dijumpai</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Rekod akan dipaparkan di sini sebaik sahaja jemaah mendaftar.</p>
                 </div>
             </div>
 
@@ -362,52 +398,52 @@
         <!-- ========================================================= -->
         <section id="tab-setup" class="hidden space-y-5">
             
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6 space-y-5">
+            <div class="glass-card bg-white/85 dark:bg-white/[0.04] rounded-[24px] border border-slate-200/80 dark:border-white/10 shadow-lg shadow-black/5 dark:shadow-black/30 p-5 sm:p-6 space-y-5">
                 <div>
-                    <h2 class="text-base sm:text-lg font-bold text-slate-900">1. Tetapan Event & Operasi Booth</h2>
-                    <p class="text-xs text-slate-500 mt-0.5">Urus nama event semasa, status pendaftaran borang jemaah, dan mod kiosk tablet.</p>
+                    <h2 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">1. Tetapan Event &amp; Operasi Booth</h2>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Urus nama event semasa, status pendaftaran borang jemaah, dan mod kiosk tablet.</p>
                 </div>
 
                 <div>
-                    <label for="config-event-select" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Nama Event Booth Semasa *</label>
+                    <label for="config-event-select" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Nama Event Booth Semasa *</label>
                     <select id="config-event-select" onchange="handleConfigEventSelectChange()"
-                        class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-azzuha-500">
+                        class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-black/40 border border-slate-300 dark:border-white/15 rounded-xl text-sm font-semibold text-slate-800 dark:text-white focus:bg-white dark:focus:bg-black/60 focus:outline-none focus:ring-2 focus:ring-[#80bd38]">
                         <option value="-">- (Tiada Event Aktif)</option>
                     </select>
                     <div id="config-new-event-wrap" class="hidden mt-2.5">
                         <input type="text" id="config-event-name" placeholder="Taip nama event baharu... Contoh: Ekspo Umrah & Haji 2026"
-                            class="w-full px-3.5 py-2.5 bg-white border border-azzuha-400 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-azzuha-500">
+                            class="w-full px-3.5 py-2.5 bg-white dark:bg-black/50 border border-[#80bd38] rounded-xl text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#80bd38]">
                     </div>
                 </div>
 
                 <!-- Tetapan No 1: Kawalan Status Borang -->
-                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-4">
+                <div class="p-4 rounded-2xl bg-slate-50/90 dark:bg-black/30 border border-slate-200 dark:border-white/10 flex items-center justify-between gap-4">
                     <div>
-                        <h3 class="text-sm font-bold text-slate-900">Status Pendaftaran Booth</h3>
-                        <p id="status-booth-desc" class="text-xs text-slate-500 mt-0.5">Borang pendaftaran dibuka untuk jemaah mengisi maklumat.</p>
+                        <h3 class="text-sm font-bold text-slate-900 dark:text-white">Status Pendaftaran Booth</h3>
+                        <p id="status-booth-desc" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Borang pendaftaran dibuka untuk jemaah mengisi maklumat.</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer shrink-0">
                         <input type="checkbox" id="config-booth-open" checked onchange="updateBoothToggleLabel()" class="sr-only peer">
-                        <div class="w-12 h-7 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-azzuha-600"></div>
+                        <div class="w-12 h-7 bg-slate-300 dark:bg-white/15 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-[#80bd38]"></div>
                     </label>
                 </div>
 
                 <!-- Tetapan No 5: Mod Kiosk Auto-Reset -->
                 <div>
-                    <label for="config-kiosk-seconds" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Mod Kiosk Auto-Reset (Tablet Booth)</label>
+                    <label for="config-kiosk-seconds" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Mod Kiosk Auto-Reset (Tablet Booth)</label>
                     <select id="config-kiosk-seconds"
-                        class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-azzuha-500">
+                        class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-black/40 border border-slate-300 dark:border-white/15 rounded-xl text-sm font-semibold text-slate-800 dark:text-white focus:bg-white dark:focus:bg-black/60 focus:outline-none focus:ring-2 focus:ring-[#80bd38]">
                         <option value="0">Dimatikan (Tekan butang 'Daftar Jemaah Seterusnya' secara manual)</option>
                         <option value="3">Auto-reset selepas 3 saat</option>
                         <option value="5">Auto-reset selepas 5 saat (Disyorkan untuk Tablet Booth)</option>
                         <option value="8">Auto-reset selepas 8 saat</option>
                         <option value="10">Auto-reset selepas 10 saat</option>
                     </select>
-                    <p class="text-[11px] text-slate-500 mt-1">Borang akan kembali kosong secara automatik selepas jemaah menekan Hantar.</p>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Borang akan kembali kosong secara automatik selepas jemaah menekan Hantar.</p>
                 </div>
 
                 <div class="pt-1 flex justify-end">
-                    <button type="button" id="btn-save-settings" onclick="saveSettings(false)" class="px-5 py-2.5 rounded-xl bg-azzuha-600 hover:bg-azzuha-700 disabled:opacity-70 disabled:cursor-not-allowed text-white text-sm font-bold shadow-sm transition-all flex items-center gap-2">
+                    <button type="button" id="btn-save-settings" onclick="saveSettings(false)" class="px-5 py-2.5 rounded-2xl bg-[#80bd38] hover:bg-[#8fd143] disabled:opacity-70 disabled:cursor-not-allowed text-slate-950 text-sm font-extrabold shadow-md shadow-[#80bd38]/20 transition-all flex items-center gap-2">
                         <i data-lucide="save" class="w-4 h-4"></i>
                         <span>Simpan Tetapan</span>
                     </button>
@@ -415,34 +451,34 @@
             </div>
 
             <!-- Tukar Password Admin -->
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6 space-y-4">
+            <div class="glass-card bg-white/85 dark:bg-white/[0.04] rounded-[24px] border border-slate-200/80 dark:border-white/10 shadow-lg shadow-black/5 dark:shadow-black/30 p-5 sm:p-6 space-y-4">
                 <div>
-                    <h2 class="text-base sm:text-lg font-bold text-slate-900">2. Keselamatan & Kata Laluan Admin</h2>
-                    <p class="text-xs text-slate-500 mt-0.5">Ubah kata laluan log masuk untuk akaun <span class="font-bold text-slate-700">azzuhatrg</span>.</p>
+                    <h2 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">2. Keselamatan &amp; Kata Laluan Admin</h2>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Ubah kata laluan log masuk untuk akaun <span class="font-bold text-[#6ba329] dark:text-[#9ee04f]">azzuhatrg</span>.</p>
                 </div>
 
                 <form onsubmit="changeAdminPassword(event)" class="space-y-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Password Semasa *</label>
+                        <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Password Semasa *</label>
                         <input type="password" id="current-admin-pass" required placeholder="Masukkan password semasa"
-                            class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-azzuha-500">
+                            class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-black/40 border border-slate-300 dark:border-white/15 rounded-xl text-sm font-semibold text-slate-900 dark:text-white focus:bg-white dark:focus:bg-black/60 focus:outline-none focus:ring-2 focus:ring-[#80bd38]">
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Password Baharu *</label>
+                            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Password Baharu *</label>
                             <input type="password" id="new-admin-pass" required placeholder="Masukkan password baharu"
-                                class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-azzuha-500">
+                                class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-black/40 border border-slate-300 dark:border-white/15 rounded-xl text-sm font-semibold text-slate-900 dark:text-white focus:bg-white dark:focus:bg-black/60 focus:outline-none focus:ring-2 focus:ring-[#80bd38]">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Sahkan Password Baharu *</label>
+                            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Sahkan Password Baharu *</label>
                             <input type="password" id="confirm-admin-pass" required placeholder="Ulang password baharu"
-                                class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-azzuha-500">
+                                class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-black/40 border border-slate-300 dark:border-white/15 rounded-xl text-sm font-semibold text-slate-900 dark:text-white focus:bg-white dark:focus:bg-black/60 focus:outline-none focus:ring-2 focus:ring-[#80bd38]">
                         </div>
                     </div>
 
                     <div class="pt-1 flex justify-end">
-                        <button type="submit" id="btn-update-pass" class="px-5 py-2.5 rounded-xl bg-azzuha-700 hover:bg-azzuha-800 disabled:opacity-70 disabled:cursor-not-allowed text-white text-sm font-bold shadow-sm transition-all flex items-center gap-2">
+                        <button type="submit" id="btn-update-pass" class="px-5 py-2.5 rounded-2xl bg-[#80bd38] hover:bg-[#8fd143] disabled:opacity-70 disabled:cursor-not-allowed text-slate-950 text-sm font-extrabold shadow-md shadow-[#80bd38]/20 transition-all flex items-center gap-2">
                             <i data-lucide="key-round" class="w-4 h-4"></i>
                             <span>Kemaskini Password</span>
                         </button>
@@ -482,6 +518,22 @@
 
         let autoSyncInterval = null;
         let pendingDeleteTarget = null;
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.classList.contains('dark');
+            if (isDark) {
+                html.classList.remove('dark');
+            } else {
+                html.classList.add('dark');
+            }
+            const nextIcon = isDark ? 'moon' : 'sun';
+            ['themeIconMobile', 'themeIconDesktop'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.setAttribute('data-lucide', nextIcon);
+            });
+            lucide.createIcons();
+        }
 
         function getStoredPassword() {
             return localStorage.getItem(KEYS.ADMIN_PASS) || DEFAULT_ADMIN_PASS;
@@ -649,11 +701,14 @@
             const navDash = document.getElementById('nav-dashboard');
             const navSetup = document.getElementById('nav-setup');
 
+            const activeBtn = 'justify-center px-3.5 py-1.5 rounded-xl text-xs font-extrabold bg-[#80bd38] text-slate-950 shadow-sm transition-all flex items-center gap-1.5';
+            const inactiveBtn = 'justify-center px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all flex items-center gap-1.5';
+
             if (tab === 'setup') {
                 dashSec.classList.add('hidden');
                 setupSec.classList.remove('hidden');
-                navSetup.className = 'justify-center px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-azzuha-900 shadow-sm transition-all flex items-center gap-1.5';
-                navDash.className = 'justify-center px-3 py-1.5 rounded-lg text-xs font-semibold text-azzuha-100 hover:text-white transition-all flex items-center gap-1.5';
+                navSetup.className = activeBtn;
+                navDash.className = inactiveBtn;
                 populateConfigEventDropdown();
                 document.getElementById('config-booth-open').checked = state.currentEvent !== '-' && state.boothOpen;
                 document.getElementById('config-kiosk-seconds').value = String(state.kioskSeconds);
@@ -661,8 +716,8 @@
             } else {
                 setupSec.classList.add('hidden');
                 dashSec.classList.remove('hidden');
-                navDash.className = 'justify-center px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-azzuha-900 shadow-sm transition-all flex items-center gap-1.5';
-                navSetup.className = 'justify-center px-3 py-1.5 rounded-lg text-xs font-semibold text-azzuha-100 hover:text-white transition-all flex items-center gap-1.5';
+                navDash.className = activeBtn;
+                navSetup.className = inactiveBtn;
             }
             lucide.createIcons();
         }
@@ -687,7 +742,6 @@
                 return;
             }
 
-            // Jika event adalah '-', paksa borang auto-tutup
             const boothOpen = eventName === '-' ? false : document.getElementById('config-booth-open').checked;
             const kioskSeconds = parseInt(document.getElementById('config-kiosk-seconds').value, 10) || 0;
 
@@ -697,7 +751,6 @@
                 state.records.some(r => String(r.event).toLowerCase() === eventName.toLowerCase())
             );
 
-            // Hanya papar popup jika pengguna pilih "+ Tambah Event Baharu..." tetapi nama sudah wujud
             if (isAddingNew && !forceOverwrite && isDifferentFromActive && alreadyInLocalList) {
                 showDuplicateModal(eventName);
                 return;
@@ -779,7 +832,6 @@
         }
 
         function initData() {
-            // Kosongkan rekod sementara dahulu supaya event baharu sentiasa bermula 0 Pax sebelum tarik data sebenar dari Google Sheet
             state.records = [];
             state.lastDropdownSignature = '';
             populateEventDropdown(true);
@@ -787,7 +839,6 @@
 
             if (state.apiUrl) {
                 syncData(false);
-                // B4: Auto-Refresh Live setiap 10 saat ketika Admin log masuk
                 if (autoSyncInterval) clearInterval(autoSyncInterval);
                 autoSyncInterval = setInterval(() => {
                     if (sessionStorage.getItem(KEYS.ADMIN_AUTH) === 'true' && !document.hidden) {
@@ -807,11 +858,9 @@
             }
 
             try {
-                // Gunakan parameter masa (?t=) supaya pelayar sentiasa tarik data segar dari Google Sheet
                 const res = await fetch(`${state.apiUrl}?t=${Date.now()}`);
                 const data = await res.json();
                 if (data.success && Array.isArray(data.records)) {
-                    // Tapis keluar sebarang baris konfigurasi (_CONFIG) supaya tidak dikira sebagai pax
                     state.records = data.records.filter(r => r.event && r.event !== '_CONFIG' && r.event !== '-' && r.nama);
                     if (Array.isArray(data.sheetNames)) {
                         state.existingEvents = data.sheetNames.filter(n => n && n !== '_CONFIG' && n !== '-');
@@ -829,7 +878,6 @@
                         localStorage.setItem(KEYS.KIOSK_SECONDS, String(state.kioskSeconds));
                     }
 
-                    // Jangan ganggu tab Tetapan jika admin sedang menaip nama event baharu
                     const setupTab = document.getElementById('tab-setup');
                     if (setupTab && setupTab.classList.contains('hidden')) {
                         populateConfigEventDropdown();
@@ -854,7 +902,6 @@
             const select = document.getElementById('filter-event-select');
             if (!select) return;
 
-            // Elakkan dropdown berkelip / tertutup sendiri semasa pengguna sedang membuka atau memfokuskan dropdown
             if (!forceRebuild && document.activeElement === select) {
                 return;
             }
@@ -873,7 +920,6 @@
             const sortedEvents = Array.from(eventSet);
             const signature = JSON.stringify({ active: state.currentEvent, list: sortedEvents });
 
-            // Jika senarai event tidak berubah, jangan bina semula HTML <option> supaya tidak berkelip
             if (!forceRebuild && signature === state.lastDropdownSignature) {
                 return;
             }
@@ -936,7 +982,6 @@
             document.getElementById('stat-haji-pax').textContent = hajiPax;
             document.getElementById('stat-haji-rekod').textContent = `${hajiRekod} keluarga`;
 
-            // B2: Tapis mengikut pilihan Pakej (ALL / UMRAH / HAJI)
             const pkgFiltered = state.pakejFilter === 'ALL'
                 ? eventRecords
                 : eventRecords.filter(r => String(r.pakej).toUpperCase() === state.pakejFilter);
@@ -962,44 +1007,44 @@
             listEl.innerHTML = filtered.map(r => {
                 const isHaji = String(r.pakej).toLowerCase() === 'haji';
                 const badgeClass = isHaji
-                    ? 'bg-amber-100 text-amber-800 border-amber-200'
-                    : 'bg-azzuha-100 text-azzuha-800 border-azzuha-200';
+                    ? 'bg-amber-500/15 text-amber-600 dark:text-amber-300 border-amber-500/25'
+                    : 'bg-[#80bd38]/15 text-[#5d8f22] dark:text-[#9ee04f] border-[#80bd38]/30';
                 const timeText = r.timestamp
                     ? new Date(r.timestamp).toLocaleString('ms-MY', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })
                     : '';
                 const waUrl = buildWhatsAppUrl(r);
 
                 return `
-                    <div class="p-4 hover:bg-slate-50/80 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div class="p-4 hover:bg-slate-50/70 dark:hover:bg-white/[0.03] transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div class="min-w-0 flex-1">
                             <div class="flex items-center gap-2 flex-wrap">
-                                <span class="font-extrabold text-sm text-slate-900 truncate">${escapeHtml(r.nama)}</span>
+                                <span class="font-extrabold text-sm text-slate-900 dark:text-white truncate">${escapeHtml(r.nama)}</span>
                                 <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border ${badgeClass}">
                                     ${escapeHtml(r.pakej)}
                                 </span>
                             </div>
-                            <div class="flex items-center gap-3 text-xs text-slate-500 mt-1 flex-wrap">
-                                <span class="font-semibold text-slate-600">${escapeHtml(r.phone)}</span>
+                            <div class="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 mt-1 flex-wrap">
+                                <span class="font-semibold text-slate-700 dark:text-slate-300">${escapeHtml(r.phone)}</span>
                                 ${timeText ? `<span>• ${timeText}</span>` : ''}
-                                ${selectedEvent === 'ALL' ? `<span class="text-azzuha-700 font-semibold">• ${escapeHtml(r.event)}</span>` : ''}
+                                ${selectedEvent === 'ALL' ? `<span class="text-[#6ba329] dark:text-[#9ee04f] font-semibold">• ${escapeHtml(r.event)}</span>` : ''}
                             </div>
                         </div>
-                        <div class="flex items-center justify-between sm:justify-end gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
-                            <span class="inline-flex items-center px-3 py-1 rounded-xl bg-azzuha-600 text-white text-xs font-extrabold shadow-xs">
+                        <div class="flex items-center justify-between sm:justify-end gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-white/5">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full bg-[#80bd38] text-slate-950 text-xs font-extrabold shadow-xs">
                                 ${parseInt(r.pax, 10) || 1} Pax
                             </span>
                             <div class="flex items-center gap-1.5">
                                 <a href="${waUrl}" target="_blank" rel="noopener noreferrer" title="WhatsApp Jemaah"
-                                    class="px-2.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold inline-flex items-center gap-1 transition-colors">
+                                    class="px-3 py-1.5 rounded-full bg-[#80bd38]/15 hover:bg-[#80bd38]/25 text-[#5d8f22] dark:text-[#9ee04f] border border-[#80bd38]/30 text-xs font-extrabold inline-flex items-center gap-1 transition-colors">
                                     <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
                                     <span>WhatsApp</span>
                                 </a>
                                 <button type="button" onclick="openEditModal('${escapeHtml(r.id)}', '${escapeHtml(r.event)}')" title="Edit Rekod"
-                                    class="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors">
+                                    class="p-2 rounded-full bg-slate-100 dark:bg-white/[0.06] hover:bg-slate-200 dark:hover:bg-white/[0.12] text-slate-700 dark:text-slate-200 transition-colors">
                                     <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                                 </button>
                                 <button type="button" onclick="openDeleteModal('${escapeHtml(r.id)}', '${escapeHtml(r.event)}', '${escapeHtml(r.nama)}')" title="Padam Rekod"
-                                    class="p-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 transition-colors">
+                                    class="p-2 rounded-full bg-rose-500/15 hover:bg-rose-500/25 text-rose-500 dark:text-rose-400 transition-colors">
                                     <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                                 </button>
                             </div>
@@ -1010,22 +1055,20 @@
             lucide.createIcons();
         }
 
-        // B2: Fungsi Tukar Penapis Pakej
         function setPakejFilter(pkg) {
             state.pakejFilter = pkg;
             ['ALL', 'UMRAH', 'HAJI'].forEach(key => {
                 const btn = document.getElementById(`filter-pkg-${key}`);
                 if (!btn) return;
                 if (key === pkg) {
-                    btn.className = 'px-3 py-1.5 rounded-xl text-xs font-extrabold bg-azzuha-600 text-white shadow-xs transition-all';
+                    btn.className = 'px-3.5 py-1.5 rounded-full text-xs font-extrabold bg-[#80bd38] text-slate-950 shadow-sm transition-all';
                 } else {
-                    btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all';
+                    btn.className = 'px-3.5 py-1.5 rounded-full text-xs font-bold bg-slate-100 dark:bg-white/[0.06] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/[0.12] transition-all';
                 }
             });
             renderDashboard();
         }
 
-        // B1: Bina Pautan WhatsApp Susulan Rasmi Azzuha
         function buildWhatsAppUrl(r) {
             let digits = String(r.phone || '').replace(/\D/g, '');
             if (digits.startsWith('0')) digits = '6' + digits;
@@ -1038,7 +1081,6 @@
             return `https://wa.me/${digits}?text=${encodeURIComponent(msg)}`;
         }
 
-        // B3: Edit Rekod Jemaah
         function openEditModal(id, eventName) {
             const rec = state.records.find(r => r.id === id && r.event === eventName);
             if (!rec) return;
@@ -1092,7 +1134,6 @@
             }
         }
 
-        // B3: Padam Rekod Jemaah
         function openDeleteModal(id, eventName, nama) {
             pendingDeleteTarget = { id, event: eventName, nama };
             document.getElementById('delete-record-message').textContent =
@@ -1187,15 +1228,15 @@
             const btnEl = document.getElementById('status-modal-btn');
 
             if (type === 'error') {
-                iconWrap.className = 'w-14 h-14 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto shadow-xs';
+                iconWrap.className = 'w-14 h-14 rounded-2xl bg-rose-500/20 text-rose-500 flex items-center justify-center mx-auto';
                 iconWrap.innerHTML = '<i data-lucide="alert-circle" class="w-8 h-8"></i>';
                 titleEl.textContent = title || 'Perhatian';
-                btnEl.className = 'w-full py-3 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-sm shadow-sm transition-all';
+                btnEl.className = 'w-full py-3 px-4 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-sm shadow-sm transition-all';
             } else {
-                iconWrap.className = 'w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-xs';
+                iconWrap.className = 'w-14 h-14 rounded-2xl bg-[#80bd38]/20 text-[#80bd38] flex items-center justify-center mx-auto';
                 iconWrap.innerHTML = '<i data-lucide="check-circle-2" class="w-8 h-8"></i>';
                 titleEl.textContent = title || 'Berjaya';
-                btnEl.className = 'w-full py-3 px-4 rounded-xl bg-azzuha-600 hover:bg-azzuha-700 text-white font-extrabold text-sm shadow-sm transition-all';
+                btnEl.className = 'w-full py-3 px-4 rounded-2xl bg-[#80bd38] hover:bg-[#8fd143] text-slate-950 font-extrabold text-sm shadow-sm transition-all';
             }
 
             msgEl.textContent = message;
